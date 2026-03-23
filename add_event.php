@@ -1,4 +1,5 @@
 <?php
+require('check-log.php');
 require('connect.php');
 if($_SERVER["REQUEST_METHOD"]==="POST"){
     //validate input data
@@ -10,8 +11,9 @@ if($_SERVER["REQUEST_METHOD"]==="POST"){
     $sport_id=$query->fetch();
     if(!$sport_id) $e="<p>Incorrect sport</p>";
 
-    $query=$connection->prepare("SELECT venue_id from venue where name=:name");
-    $query->execute(['name'=>$_POST['venue']]);
+    $query=$connection->prepare("SELECT venue_id from venue join location on location.location_id=venue._location_id where name=:name and city=:city");
+    $arr=explode('-',$_POST["venue"]);
+    $query->execute(['name'=>$arr[0],'city'=>$arr[1]]);
     $venue_id=$query->fetch();
     if(!$venue_id) $e="<p>Incorrect venue</p>";
 
@@ -72,15 +74,15 @@ if($_SERVER["REQUEST_METHOD"]==="POST"){
             <input type="number" id="num_teams"> <button onclick="generate()">Generate input</button>
             <form action="<?=$_SERVER['PHP_SELF']?>" method="post" >
                 <label>Date</label>
-                <input type="date" name="date"> </br>
+                <input type="date" name="date"> 
                 <label>Time</label>
-                <input type="time" name="time"> </br>
+                <input type="time" name="time"> 
                 <label>Sport</label>
-                <input type="text" name="sport" list="sports"> </br>
+                <input type="text" name="sport" list="sports"> 
                 <label>Venue</label>
-                <input type="text" name="venue" list="venues"> </br>
+                <input type="text" name="venue" list="venues"> 
                 <label>Competition</label>
-                <input type="text" name="competition" list="competitions"> </br>
+                <input type="text" name="competition" list="competitions">
                 <label>Description</label>
                 <textarea name="description"></textarea>
             
@@ -94,9 +96,9 @@ if($_SERVER["REQUEST_METHOD"]==="POST"){
                 </datalist> 
                 <datalist id="venues">
                     <?php
-                    $query=$connection->query("SELECT name from venue");
+                    $query=$connection->query("SELECT name,city from venue join location on location.location_id=venue._location_id");
                     $results=$query->fetchAll();
-                    foreach($results as $result) echo "<option value=\"{$result['name']}\">"
+                    foreach($results as $result) echo "<option value=\"{$result['name']}-{$result['city']}\">"
                     ?>
                 </datalist> 
                 <datalist id="teams">

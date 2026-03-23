@@ -7,12 +7,20 @@ function generate(){
     }
 }
 window.onload=function(){
-    document.getElementById('extras').style.display="none";
-    document.getElementById('extra').addEventListener('click',
-    function(event){
-        event.preventDefault();
-        let elem= document.getElementById('extras');
-        elem.style.display=="none"? elem.style.display="block":elem.style.display="none";
+    let elem=document.getElementById('extras')
+    if(elem){
+        elem.style.display="none";
+        document.getElementById('extra').addEventListener('click',
+        function(event){
+            event.preventDefault();
+            let elem= document.getElementById('extras');
+            elem.style.display=="none"? elem.style.display="block":elem.style.display="none";
+        }
+        );
     }
-    );
+}
+function selected_winner(num){
+    let elem=document.getElementById("team"+num).value;
+    let id=document.getElementById("team"+num).name;
+    if(elem) window.location.href="winner_addition.php?t="+elem+"&e="+id;
 }

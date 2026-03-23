@@ -95,7 +95,7 @@ require('connect.php')?>
             //fetching event data
             if($_SERVER['REQUEST_METHOD']==='POST'){
                 require('connect.php');
-                $sql='SELECT event_id,date,time,venue.name as v_name,city,country,sport.name as s_name,competition.name as c_name, status
+                $sql='SELECT event_id,date,time,venue.name as v_name,city,country,sport.name as s_name,competition.name as c_name
                 FROM event JOIN competition ON competition.competition_id=event._competition_id join sport on sport.sport_id=event._sport_id 
                 join venue ON venue.venue_id=event._venue_id join location on location.location_id=venue._location_id
                 ';
@@ -133,17 +133,10 @@ require('connect.php')?>
                 $query->execute();
                 $results=$query->fetchAll();
                 //get a list of playing teams for each event
-                $id_list=$results[0]['event_id'];
-                for($i=1;$i<sizeof($results);$i++){
-                    $id_list.=",{$results[$i]['event_id']}";
-                }
-                $query=$connection->query("SELECT _event_id,name FROM teams_playing join team on team.team_id=teams_playing._team_id where _event_id in($id_list)");
-                $teams=$query->fetchAll();
-                $team_event=[];
-                foreach($teams as $team){
-                    if(array_key_exists($team["_event_id"],$team_event)) $team_event[$team["_event_id"]].="</br> {$team['name']}";
-                    else $team_event[$team["_event_id"]]=$team['name'];
-                }
+                $event_ids=[];
+                for($i=0;$i<sizeof($results);$i++) array_push($event_ids,$results[$i]["event_id"]);
+                require("get_players.php");
+                $team_event=get_players($event_ids);
                 //build result table
                 ?>
                 <table border="1" cellpadding="10" cellspacing="0">
@@ -154,7 +147,7 @@ require('connect.php')?>
                     <?php
                         foreach($results as $result){
                             $time=date('D',strtotime($result['date']))." {$result['date']}";
-                            $teams=$team_event[$result['event_id']];
+                            $teams=str_replace(';',"</br>",$team_event[$result['event_id']]);
                             if(strlen($teams)>100) $teams=substr($teams,0,100).'...';
                             echo "<tr><th>$time</br>".substr($result['time'],0,5)."</br><a href=\"single_event.php?e={$result['event_id']}\" >details</a></th><th>{$result['s_name']}</th><th>{$result['v_name']}</br>{$result['city']}</br>{$result['country']}</th>
                             <th>{$result['c_name']}</th><th>$teams</th></tr>";
