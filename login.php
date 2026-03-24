@@ -30,10 +30,10 @@ if($_SERVER["REQUEST_METHOD"]==="POST"){
             <main>
                 <div>
                 <form action="<?=$_SERVER['PHP_SELF']?>" method="post" >
-                    <label>Login</label>
-                    <input type="text" name="login">
+                    <label>Login (prefilled for demonstration)</label>
+                    <input type="text" name="login" value="test">
                     <label>Password</label>
-                    <input type="password" name="password"> </br>
+                    <input type="password" name="password" value="test"> </br>
                     <input type="submit" value="Log in">
                 </form>
                 </div>
