@@ -11,11 +11,14 @@ if($_SERVER["REQUEST_METHOD"]==="POST"){
     $sport_id=$query->fetch();
     if(!$sport_id) $e="<p>Incorrect sport</p>";
 
-    $query=$connection->prepare("SELECT venue_id from venue join location on location.location_id=venue._location_id where name=:name and city=:city");
-    $arr=explode('-',$_POST["venue"]);
-    $query->execute(['name'=>$arr[0],'city'=>$arr[1]]);
-    $venue_id=$query->fetch();
-    if(!$venue_id) $e="<p>Incorrect venue</p>";
+    if($_POST["venue"] && strpos($_POST["venue"],"/")){
+        $query=$connection->prepare("SELECT venue_id from venue join location on location.location_id=venue._location_id where name=:name and city=:city");
+        $arr=explode('/',$_POST["venue"]);
+        $query->execute(['name'=>$arr[0],'city'=>$arr[1]]);
+        $venue_id=$query->fetch();
+        if(!$venue_id) $e="<p>Incorrect venue</p>";
+    }
+    else $e="<p>Incorrect venue</p>";
 
     $query=$connection->prepare("SELECT competition_id from competition where name=:name");
     $query->execute(['name'=>$_POST['competition']]);
@@ -98,7 +101,7 @@ if($_SERVER["REQUEST_METHOD"]==="POST"){
                     <?php
                     $query=$connection->query("SELECT name,city from venue join location on location.location_id=venue._location_id");
                     $results=$query->fetchAll();
-                    foreach($results as $result) echo "<option value=\"{$result['name']}-{$result['city']}\">"
+                    foreach($results as $result) echo "<option value=\"{$result['name']}/{$result['city']}\">"
                     ?>
                 </datalist> 
                 <datalist id="teams">

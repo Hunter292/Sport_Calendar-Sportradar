@@ -4,6 +4,7 @@ if(!$_SERVER["REQUEST_METHOD"]==="GET" || !isset($_GET["e"])){
     exit();
 }
 require('connect.php');
+//get event data
 $event_id=$_GET["e"];
 $sql='SELECT event_id,date,time,venue.name as v_name,city,country,sport.name as s_name,competition.name as c_name, status,description,capacity,address,_winner
             FROM event JOIN competition ON competition.competition_id=event._competition_id join sport on sport.sport_id=event._sport_id 
@@ -15,6 +16,7 @@ if(!$result){
     header("Location:index.php");
     exit();
 }
+//get teams that play the event
 $query=$connection->prepare("SELECT name,city,country,team_id FROM teams_playing join team on teams_playing._team_id=team.team_id LEFT JOIN location on location.location_id=team._location_id WHERE _event_id=:event");
 $query->execute(["event"=>$event_id]);
 $teams=$query->fetchAll();
@@ -46,8 +48,8 @@ $teams=$query->fetchAll();
                         }
                     ?>
                     </div></div>
-                    <div><h3>Venue</h3><div><p>City: <?=$result["city"]?></p><p>Country: <?=$result["country"]?></p><p>Capacity: <?=$result["capacity"]?></p></div></div>
-                    <div><h3>Description:</h3><div><p><?=$result["description"]?></p></div></div>
+                    <div><h3>Venue</h3><div><p>Address: <?=$result["address"]?></p><p>City: <?=$result["city"]?></p><p>Country: <?=$result["country"]?></p><p>Capacity: <?=$result["capacity"]?></p></div></div>
+                    <div><h3>Description:</h3><div><p class="long-text"><?=$result["description"]?></p></div></div>
 
                     
                 </div>
