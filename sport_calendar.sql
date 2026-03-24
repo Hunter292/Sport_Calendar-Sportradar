@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 20, 2026 at 11:09 PM
+-- Generation Time: Mar 24, 2026 at 12:59 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -46,7 +46,8 @@ CREATE TABLE `event` (
   `_winner` int(11) DEFAULT NULL,
   `date` date NOT NULL,
   `time` time NOT NULL,
-  `status` varchar(25) NOT NULL
+  `status` varchar(25) NOT NULL,
+  `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -93,8 +94,19 @@ CREATE TABLE `team` (
 CREATE TABLE `teams_playing` (
   `id` int(11) NOT NULL,
   `_event_id` int(11) NOT NULL,
-  `_team_id` int(11) NOT NULL,
-  `host` tinyint(1) NOT NULL
+  `_team_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE `user` (
+  `user_id` int(11) NOT NULL,
+  `login` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -107,6 +119,7 @@ CREATE TABLE `venue` (
   `venue_id` int(11) NOT NULL,
   `_location_id` int(11) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
   `capacity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -158,6 +171,12 @@ ALTER TABLE `teams_playing`
   ADD KEY `_team_id` (`_team_id`);
 
 --
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`user_id`);
+
+--
 -- Indexes for table `venue`
 --
 ALTER TABLE `venue`
@@ -203,6 +222,12 @@ ALTER TABLE `team`
 --
 ALTER TABLE `teams_playing`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `venue`
